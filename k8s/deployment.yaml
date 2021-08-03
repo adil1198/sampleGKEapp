@@ -1,0 +1,41 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "samplegke"
+  namespace: "default"
+  labels:
+    app: "samplegke"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "samplegke"
+  template:
+    metadata:
+      labels:
+        app: "samplegke"
+    spec:
+      containers:
+      - name: "github-adil1198-samplegkeapp-1"
+        image: "gcr.io/samplegkeapp/github_adil1198_samplegkeapp:$SHORT_SHA"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "samplegke-hpa-lcie"
+  namespace: "default"
+  labels:
+    app: "samplegke"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "samplegke"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
